@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dataiku
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dataiku-pvc
+  namespace: dataiku
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataiku-deployment
+  namespace: dataiku
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataiku
+  template:
+    metadata:
+      labels:
+        app: dataiku
+    spec:
+      initContainers: # Init container to ensure permissions
+      - name: init-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /home/dataiku/dss"]
+        volumeMounts:
+        - name: dataiku-storage
+          mountPath: /home/dataiku/dss
+      containers:
+      - name: dataiku
+        image: rhanka/dataiku:latest
+        ports:
+        - containerPort: 10000
+        env:
+        - name: DIP_HOME
+          value: "/home/dataiku/dss"
+        volumeMounts:
+        - mountPath: "/home/dataiku/dss"
+          name: dataiku-storage
+      volumes:
+      - name: dataiku-storage
+        persistentVolumeClaim:
+          claimName: dataiku-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataiku-service
+  namespace: dataiku
+spec:
+  selector:
+    app: dataiku
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 10000
+  type: LoadBalancer
