@@ -32,6 +32,18 @@ RUN mkdir -p /usr/local/lib/R/site-library \
             '/usr/local/lib/R/site-library', \
             repos='https://cloud.r-project.org')"
 
+# Enable docker to enable to build compatible docker images
+# Don't need to install systemctl
+RUN dnf --refresh update \
+    && dnf upgrade \
+    && dnf install yum-utils \
+    && yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo \
+    && dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Enable kubectl management
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
 # Entry point
 WORKDIR /home/dataiku
 USER dataiku
