@@ -4,7 +4,7 @@ This directory contains the Dockerfile which is used by Dataiku to build the sta
 
 To rebuild, run (around 30 minutes):
 
-    DSS_VERSION=13.3.0
+    DSS_VERSION=13.3.1
     docker build --build-arg dssVersion=${DSS_VERSION} -t dataiku:${DSS_VERSION} .
 
 To run, with data in `DSS_DATADIR` (e.g `~/dss`)
