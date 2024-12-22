@@ -34,11 +34,12 @@ RUN mkdir -p /usr/local/lib/R/site-library \
 
 # Enable docker to enable to build compatible docker images
 # Don't need to install systemctl
-RUN dnf --refresh update \
-    && dnf upgrade \
-    && dnf install yum-utils \
+RUN dnf --refresh update -y \
+    && dnf upgrade -y \
+    && dnf install -y yum-utils \
     && yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo \
-    && dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    && dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin \
+    && dnf clean all
 
 # Enable kubectl management
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
