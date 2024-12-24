@@ -63,7 +63,7 @@ spec:
         volumeMounts:
         - mountPath: "/home/dataiku/dss"
           name: dataiku-storage
-        - mountPath: "/tmp"
+        - mountPath: "/var/tmp"
           name: temp-storage
       volumes:
       - name: dataiku-storage
