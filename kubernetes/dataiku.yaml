@@ -50,6 +50,11 @@ spec:
         volumeMounts:
         - mountPath: "/home/dataiku/dss"
           name: dataiku-storage
+        resources:
+          requests:
+            ephemeral-storage: "500Mi"  # Minimum requis pour l'exécution
+          limits:
+            ephemeral-storage: "2Gi"    # Limite maximale autorisée
       volumes:
       - name: dataiku-storage
         persistentVolumeClaim:
