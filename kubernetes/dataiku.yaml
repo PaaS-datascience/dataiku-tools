@@ -17,6 +17,19 @@ spec:
       storage: 50Gi
 
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: temp-pvc
+  namespace: dataiku
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,15 +63,15 @@ spec:
         volumeMounts:
         - mountPath: "/home/dataiku/dss"
           name: dataiku-storage
-        resources:
-          requests:
-            ephemeral-storage: "500Mi"  # Minimum requis pour l'exécution
-          limits:
-            ephemeral-storage: "2Gi"    # Limite maximale autorisée
+        - mountPath: "/tmp"
+          name: temp-storage
       volumes:
       - name: dataiku-storage
         persistentVolumeClaim:
           claimName: dataiku-pvc
+      - name: temp-storage
+        persistentVolumeClaim:
+          claimName: temp-pvc
 
 ---
 apiVersion: v1
