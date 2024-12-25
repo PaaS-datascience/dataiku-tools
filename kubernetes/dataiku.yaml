@@ -67,6 +67,9 @@ spec:
           name: dataiku-storage
         - mountPath: "/tmp"
           name: temp-storage
+        - mountPath: "/home/dataiku/.kube/config"
+          name: kubeconfig-volume
+          subPath: config
       volumes:
       - name: dataiku-storage
         persistentVolumeClaim:
@@ -74,7 +77,11 @@ spec:
       - name: temp-storage
         persistentVolumeClaim:
           claimName: temp-pvc
-
+      - name: kubeconfig-volume
+        secret:
+          secretName: kubeconfig-secret
+          # supposing you've created the kubectl secret with the following command:
+          # kubectl create secret generic kubeconfig-secret --from-file=config -n dataiku
 ---
 apiVersion: v1
 kind: Service
