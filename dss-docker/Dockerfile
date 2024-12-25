@@ -32,6 +32,17 @@ RUN mkdir -p /usr/local/lib/R/site-library \
             '/usr/local/lib/R/site-library', \
             repos='https://cloud.r-project.org')"
 
+# Install Python 3.11
+RUN PYTHON_VERSION=3.11.11 \
+    && dnf install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel \
+    && curl "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz" | \
+    tar xzf - \
+    && cd Python-${PYTHON_VERSION} \
+    && ./configure --enable-optimizations \
+    && make altinstall \
+    && cd .. \
+    && rm -rf Python-${PYTHON_VERSION}
+
 # Enable docker to enable to build compatible docker images
 # Don't need to install systemctl
 RUN dnf --refresh update -y \
