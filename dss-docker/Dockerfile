@@ -34,7 +34,7 @@ RUN mkdir -p /usr/local/lib/R/site-library \
 
 # Install Python 3.11
 RUN PYTHON_VERSION=3.11.11 \
-    && dnf install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel \
+    && dnf install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel sqlite-devel \
     && curl "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz" | \
     tar xzf - \
     && cd Python-${PYTHON_VERSION} \
