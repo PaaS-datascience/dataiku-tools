@@ -70,6 +70,20 @@ spec:
         - mountPath: "/home/dataiku/.kube/config"
           name: kubeconfig-volume
           subPath: config
+        - mountPath: /var/run/
+          name: docker-sock # Docker socket mount for interaction with dind sidecar
+        securityContext:
+          runAsGroup: 2375       # GID du groupe Docker (socket owner group)
+      - name: dind
+        image: docker:dind
+        securityContext:
+          privileged: true
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        volumeMounts:
+        - mountPath: /var/run
+          name: docker-sock
       volumes:
       - name: dataiku-storage
         persistentVolumeClaim:
@@ -82,6 +96,8 @@ spec:
           secretName: kubeconfig-secret
           # supposing you've created the kubectl secret with the following command:
           # kubectl create secret generic kubeconfig-secret --from-file=config -n dataiku
+      - name: docker-sock
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
