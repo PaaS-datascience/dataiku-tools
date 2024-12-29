@@ -62,6 +62,8 @@ spec:
         env:
         - name: DIP_HOME
           value: "/home/dataiku/dss"
+        - name: DKU_BACKEND_EXT_HOST
+          value: "dataiku-internal.dataiku.svc.cluster.local"
         volumeMounts:
         - mountPath: "/home/dataiku/dss"
           name: dataiku-storage
@@ -112,3 +114,26 @@ spec:
       port: 80
       targetPort: 10000
   type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataiku-internal
+  namespace: dataiku
+spec:
+  selector:
+    app: dataiku
+  ports:
+    - protocol: TCP
+      port: 10001
+      targetPort: 10001
+      name: backend-1
+    - protocol: TCP
+      port: 37453
+      targetPort: 37453
+      name: backend-2
+    - protocol: TCP
+      port: 43851
+      targetPort: 43851
+      name: backend-3
+  type: ClusterIP
