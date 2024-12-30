@@ -43,6 +43,15 @@ RUN PYTHON_VERSION=3.11.11 \
     && cd .. \
     && rm -rf Python-${PYTHON_VERSION}
 
+# Install packages to enable unstructured.io usage
+RUN dnf install -y file poppler-utils libreoffice pandoc tesseract \
+    && dnf clean all
+
+# Install French language data for Tesseract
+RUN mkdir -p /usr/share/tessdata \
+    && curl -Lo /usr/share/tessdata/fra.traineddata \
+    https://github.com/tesseract-ocr/tessdata_fast/raw/main/fra.traineddata
+
 # Enable docker to enable to build compatible docker images
 # Don't need to install systemctl
 RUN dnf --refresh update -y \
