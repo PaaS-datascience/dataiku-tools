@@ -90,6 +90,42 @@ Kubernetes configurqtion release note:
 
 - supports docker-in-docker (dind) with a sidecar container (support) as it is mandatory to enable dssadmin cli to build containers for k8s exectution
 
+##### Enabling elastic AI computation with kubernetes
+
+Follow official Dataiku documentation for [Managed Kubernetes clusters](https://doc.dataiku.com/dss/latest/containers/managed-k8s-clusters.html) with [Google GKE](https://doc.dataiku.com/dss/latest/containers/gke/index.html), [Amazon EKS](https://doc.dataiku.com/dss/latest/containers/eks/index.html) or [Microsoft Azure AKS](https://doc.dataiku.com/dss/latest/containers/aks/index.html) or [Custom Kubernetes or Openshift clusters](https://doc.dataiku.com/dss/latest/containers/unmanaged-k8s-clusters.html)
+
+##### Building base and cde images
+
+If admin from UI don't work or if you want to enable custom registry and to publish Dockerfiles, here are some commands to use:
+
+    kubectl exec -it -n dataiku $(kubectl get -n dataiku all | grep Running | awk '{print $1}') -- bash
+    cd dss
+    # build base image
+    /bin/dssadmin build-base-image --type container-exec --with-py311 --with-py39
+    # [... build log ...]
+    # #43  naming to docker.io/library/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1 0.0s done
+    # #43 DONE 52.7s
+    # 2025-01-25 00:11:23,029 INFO Done, cleaning up
+    # Saved to /home/dataiku/dss/tmp/exec-docker-base-image.xxx/Dockerfile
+    # Dockerfile should be committed to be audited by SAST tools
+    docker login registry.url/id
+    docker tag dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1 registry.url/id/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1
+    docker push registry.url/id/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1
+
+Same thing for cde image
+
+    # build cde image
+    /bin/dssadmin build-base-image --type cde --with-py311 --with-py39
+    # [... build logs ]
+    docker login registry.url/id
+    docker tag dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1 registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1
+    docker push registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.1
+
+With those two files built, you will be able to enable following features:
+
+- VSCode execution within Dataiku
+
+
 
 ### Dataiku data lifecycle management
 
