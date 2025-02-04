@@ -14,7 +14,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: 200Gi
 
 ---
 apiVersion: v1
@@ -56,14 +56,16 @@ spec:
           name: temp-storage
       containers:
       - name: dataiku
-        image: rhanka/dataiku:latest
+        image: rhanka/dataiku:13.3.3
         ports:
         - containerPort: 10000
         env:
         - name: DIP_HOME
           value: "/home/dataiku/dss"
         - name: DKU_BACKEND_EXT_HOST
-          value: "dataiku-internal.dataiku.svc.cluster.local"
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         volumeMounts:
         - mountPath: "/home/dataiku/dss"
           name: dataiku-storage
@@ -136,4 +138,5 @@ spec:
       port: 43851
       targetPort: 43851
       name: backend-3
+
   type: ClusterIP
