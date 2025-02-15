@@ -111,14 +111,14 @@ If admin from UI don't work or if you want to enable custom registry and to publ
     # build base image
     ./bin/dssadmin build-base-image --type container-exec --with-py311 --with-py39
     # [... build log ...]
-    # #43  naming to docker.io/library/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3 0.0s done
+    # #43  naming to docker.io/library/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0 0.0s done
     # #43 DONE 52.7s
     # 2025-01-25 00:11:23,029 INFO Done, cleaning up
     # Saved to /home/dataiku/dss/tmp/exec-docker-base-image.xxx/Dockerfile
     # Dockerfile should be committed to be audited by SAST tools
     docker login registry.url/id
-    docker tag dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3 registry.url/id/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3
-    docker push registry.url/id/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3
+    docker tag dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0 registry.url/id/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-14.4.0
+    docker push registry.url/id/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
 
 Same thing for cde image
 
@@ -126,8 +126,8 @@ Same thing for cde image
     ./bin/dssadmin build-base-image --type cde --with-py311 --with-py39
     # [... build logs ]
     docker login registry.url/id
-    docker tag dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3 registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3
-    docker push registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3
+    docker tag dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0 registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
+    docker push registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
 
 With those two files built, you will be able to enable following features in Kubernetes:
 
