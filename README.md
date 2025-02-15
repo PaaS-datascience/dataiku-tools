@@ -62,6 +62,10 @@ Create kubectl secret with the following command to enable usage with the dataik
 
     kubectl create secret generic kubeconfig-secret --from-file=config -n dataiku
 
+You must also create a secret to access to the container registry:
+
+    kubectl -n dataiku create secret docker-registry container-registry-secret  --docker-server ${DOCKER_REGISTRY} --docker-username=${DOCKER_USER} --docker-password=${DOCKER_PASSWORD}
+
 ##### Build design node kubernetes image
 
 With `DSS_VERSION`set to be dss version to be build (e.g. 13.4.0):
