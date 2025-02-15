@@ -58,12 +58,16 @@ This is the recommended mode by dataiku and offers a
 
 #### Self-managed lifecycle - Kubernetes
 
+Create kubectl secret with the following command to enable usage with the dataiku design instance:
+
+    kubectl create secret generic kubeconfig-secret --from-file=config -n dataiku
+
 ##### Build design node kubernetes image
 
-With `DSS_VERSION`set to be dss version to be build (e.g. 13.3.3):
+With `DSS_VERSION`set to be dss version to be build (e.g. 13.4.0):
 
     cd dss-docker
-    DSS_VERSION=13.3.3
+    DSS_VERSION=13.4.0
     docker build --build-arg dssVersion=${DSS_VERSION} -t dataiku:${DSS_VERSION} .
 
 Docker image release note:
@@ -121,11 +125,12 @@ Same thing for cde image
     docker tag dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3 registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3
     docker push registry.url/id/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.3.3
 
-With those two files built, you will be able to enable following features:
+With those two files built, you will be able to enable following features in Kubernetes:
 
 - VSCode execution within Dataiku
-
-
+- Jupyter Notebooks
+- Recipe code execution
+- Webapp / API / ML Scoring API
 
 ### Dataiku data lifecycle management
 

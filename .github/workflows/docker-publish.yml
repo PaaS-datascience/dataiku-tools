@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DSS_VERSION: 13.3.1
+  DSS_VERSION: 13.4.0
 
 jobs:
   build:
