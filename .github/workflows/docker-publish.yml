@@ -37,7 +37,7 @@ jobs:
     - name: Check if Docker image exists
       id: image-check
       run: |
-        IMAGE_NAME="${{ env.DOCKER_REGISTRY }}/dataiku:${{ env.DSS_VERSION }}"
+        IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/dataiku:${{ env.DSS_VERSION }}"
         echo "Checking for image: $IMAGE_NAME"
 
         # Use docker manifest inspect to check if the image exists
