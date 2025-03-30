@@ -38,16 +38,12 @@ jobs:
           echo "::set-output name=image_exists::false"
         fi
 
-    - name: Skip build if image exists
-      if: steps.image-check.outputs.image_exists == 'true'
-      run: |
-        echo "Image already exists, skipping build process."
-        exit 0 # Exit with success status
-
     - name: Set up Docker Buildx
+      if: steps.image-check.outputs.image_exists == 'false'
       uses: docker/setup-buildx-action@v2
 
     - name: Cache Docker layers
+      if: steps.image-check.outputs.image_exists == 'false'
       uses: actions/cache@v3
       with:
         path: /tmp/.buildx-cache
@@ -70,7 +66,7 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
     - name: Post cache Docker layers
-      if: always()
+      if: steps.image-check.outputs.image_exists == 'false'
       uses: actions/cache@v3
       with:
         path: /tmp/.buildx-cache
