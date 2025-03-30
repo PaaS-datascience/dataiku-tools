@@ -68,10 +68,10 @@ You must also create a secret to access to the container registry:
 
 ##### Build design node kubernetes image
 
-With `DSS_VERSION`set to be dss version to be build (e.g. 13.4.0):
+With `DSS_VERSION`set to be dss version to be build (e.g. 13.4.3):
 
     cd dss-docker
-    DSS_VERSION=13.4.0
+    DSS_VERSION=13.4.3
     docker build --build-arg dssVersion=${DSS_VERSION} -t dataiku:${DSS_VERSION} .
 
 Docker image release note:
@@ -111,14 +111,14 @@ If admin from UI don't work or if you want to enable custom registry and to publ
     # build base image
     ./bin/dssadmin build-base-image --type container-exec --with-py311 --with-py39
     # [... build log ...]
-    # #43  naming to docker.io/library/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0 0.0s done
+    # #43  naming to docker.io/library/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3 0.0s done
     # #43 DONE 52.7s
     # 2025-01-25 00:11:23,029 INFO Done, cleaning up
     # Saved to /home/dataiku/dss/tmp/exec-docker-base-image.xxx/Dockerfile
     # Dockerfile should be committed to be audited by SAST tools
     docker login ${DOCKER_REGISTRY}
-    docker tag dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0 ${DOCKER_REGISTRY}/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
-    docker push ${DOCKER_REGISTRY}/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
+    docker tag dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3 ${DOCKER_REGISTRY}/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3
+    docker push ${DOCKER_REGISTRY}/dku-exec-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3
 
 Same thing for cde image
 
@@ -126,8 +126,8 @@ Same thing for cde image
     ./bin/dssadmin build-base-image --type cde --with-py311 --with-py39
     # [... build logs ]
     docker login ${DOCKER_REGISTRY}
-    docker tag dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0 ${DOCKER_REGISTRY}/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
-    docker push ${DOCKER_REGISTRY}/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.0
+    docker tag dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3 ${DOCKER_REGISTRY}/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3
+    docker push ${DOCKER_REGISTRY}/dku-cde-base-ru4oxgmkpuoy4djmkkuvxfng:dss-13.4.3
 
 With those two files built, you will be able to enable following features in Kubernetes:
 
