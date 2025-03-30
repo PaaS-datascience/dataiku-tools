@@ -7,6 +7,7 @@ on:
 
 env:
   DSS_VERSION: 13.4.3
+  KUBE_NAMESPACE: dataiku
 
 jobs:
   build:
@@ -64,3 +65,39 @@ jobs:
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: demo
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Kubernetes cluster
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f kubernetes/dataiku.yml
+
+      - name: Wait for Dataiku pod to be ready
+        run: |
+          kubectl wait --for=condition=Ready pod -l app=dataiku -n ${{ env.KUBE_NAMESPACE }} --timeout=300s
+          POD_NAME=$(kubectl get pods -n ${{ env.KUBE_NAMESPACE }} -l app=dataiku -o jsonpath='{.items[0].metadata.name}')
+          echo "POD_NAME=$POD_NAME" >> $GITHUB_ENV
+
+      - name: Login to Scaleway Registry inside Dataiku pod
+        run: |
+          kubectl -n ${{ env.KUBE_NAMESPACE }} exec -it ${{ env.POD_NAME }} -- docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push base image
+        run: |
+          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type container-exec --with-py311 --with-py39 && docker tag $(docker images | grep 'dku-exec-base' | awk '{print $3}') ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-exec-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }} && docker push ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-exec-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }}"
+
+      - name: Build and push cde image
+        run: |
+          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type cde --with-py311 --with-py39 && docker tag $(docker images | grep 'dku-cde-base' | awk '{print $3}') ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-cde-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }} && docker push ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-cde-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }}"
