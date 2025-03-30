@@ -37,7 +37,11 @@ jobs:
     - name: Check if Docker image exists
       id: image-check
       run: |
-        if docker pull ${{ secrets.DOCKER_USERNAME }}/dataiku:${{ env.DSS_VERSION }}; then
+        IMAGE_NAME="${{ env.DOCKER_REGISTRY }}/dataiku:${{ env.DSS_VERSION }}"
+        echo "Checking for image: $IMAGE_NAME"
+
+        # Use docker manifest inspect to check if the image exists
+        if docker manifest inspect "$IMAGE_NAME" > /dev/null 2>&1; then
           echo "Image exists"
           echo "::set-output name=image_exists::true"
         else
@@ -83,6 +87,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: kubectl apply -f kubernetes/dataiku.yml
+        working-directory: ${{ github.workspace }}
 
       - name: Wait for Dataiku pod to be ready
         run: |
