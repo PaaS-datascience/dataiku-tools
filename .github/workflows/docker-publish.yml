@@ -102,8 +102,8 @@ jobs:
 
       - name: Build and push base image
         run: |
-          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type container-exec --with-py311 --with-py39 && docker tag $(docker images | grep 'dku-exec-base' | awk '{print $3}') ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-exec-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }} && docker push ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-exec-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }}"
+          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type container-exec --with-py311 --with-py39 && docker tag \$(docker images | grep 'dku-exec-base' | awk '{print \$1 "'"'":"'"'" \$2}') ${{ secrets.DOCKER_REGISTRY }}/\$(docker images | grep 'dku-exec-base' | awk '{print \$1 "'"'":"'"'" \$2}') && docker push ${{ secrets.DOCKER_REGISTRY }}/\$(docker images | grep 'dku-exec-base' | awk '{print \$1 "'"'":"'"'" \$2}')"
 
       - name: Build and push cde image
         run: |
-          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type cde --with-py311 --with-py39 && docker tag $(docker images | grep 'dku-cde-base' | awk '{print $3}') ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-cde-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }} && docker push ${{ secrets.DOCKER_REGISTRY }}/$(docker images | grep 'dku-cde-base' | awk '{print $1}'):dss-${{ env.DSS_VERSION }}"
+          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type cde --with-py311 --with-py39 && docker tag \$(docker images | grep 'dku-exec-base' | awk '{print \$1 "'"'":"'"'" \$2}') ${{ secrets.DOCKER_REGISTRY }}/\$(docker images | grep 'dku-exec-base' | awk '{print \$1 "'"'":"'"'" \$2}') && docker push ${{ secrets.DOCKER_REGISTRY }}/\$(docker images | grep 'dku-exec-base' | awk '{print \$1 "'"'":"'"'" \$2}')"
