@@ -86,8 +86,7 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
 
       - name: Deploy to Kubernetes
-        run: kubectl apply -f kubernetes/dataiku.yml
-        working-directory: ${{ github.workspace }}
+        run: kubectl apply -f kubernetes/dataiku.yaml
 
       - name: Wait for Dataiku pod to be ready
         run: |
