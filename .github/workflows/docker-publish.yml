@@ -102,7 +102,7 @@ jobs:
 
       - name: Login to Scaleway Registry inside Dataiku pod
         run: |
-          kubectl -n ${{ env.KUBE_NAMESPACE }} exec -it ${{ env.POD_NAME }} -- docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+          kubectl -n ${{ env.KUBE_NAMESPACE }} exec -it ${{ env.POD_NAME }} -- docker login ${{ secrets.DOCKER_REGISTRY }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push base image
         run: |
