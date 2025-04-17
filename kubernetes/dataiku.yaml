@@ -48,12 +48,10 @@ spec:
       initContainers: # Init container to ensure permissions
       - name: init-permissions
         image: busybox
-        command: ["sh", "-c", "chown -R 1000:1000 /home/dataiku/dss && chmod -R 777 /tmp/ && rm -rf /tmp/*"]
+        command: ["sh", "-c", "chown -R 1000:1000 /home/dataiku/dss"]
         volumeMounts:
         - name: dataiku-storage
           mountPath: /home/dataiku/dss
-        - mountPath: "/tmp"
-          name: temp-storage
       containers:
       - name: dataiku
         image: rhanka/dataiku:13.4.4
@@ -67,11 +65,9 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         volumeMounts:
-        - mountPath: "/home/dataiku/dss"
-          name: dataiku-storage
-        - mountPath: "/tmp"
-          name: temp-storage
-        - mountPath: "/home/dataiku/.kube/config"
+        - name: dataiku-storage
+          mountPath: /home/dataiku/dss
+        - mountPath: /home/dataiku/.kube/config
           name: kubeconfig-volume
           subPath: config
         - mountPath: /var/run/
@@ -86,8 +82,10 @@ spec:
         - name: DOCKER_TLS_CERTDIR
           value: ""
         volumeMounts:
-        - mountPath: /var/run
-          name: docker-sock
+        - name: docker-sock
+          mountPath: /var/run
+        - name: temp-storage
+          mountPath: /var/lib/docker   # ← persistance des images Docker
       volumes:
       - name: dataiku-storage
         persistentVolumeClaim:
