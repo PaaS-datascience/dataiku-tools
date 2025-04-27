@@ -68,10 +68,10 @@ You must also create a secret to access to the container registry:
 
 ##### Build design node kubernetes image
 
-With `DSS_VERSION`set to be dss version to be build (e.g. 13.4.4):
+With `DSS_VERSION`set to be dss version to be build (e.g. 13.5.0):
 
     cd dss-docker
-    DSS_VERSION=13.4.4
+    DSS_VERSION=13.5.0
     docker build --build-arg dssVersion=${DSS_VERSION} -t dataiku:${DSS_VERSION} .
 
 Docker image release note:
@@ -109,7 +109,7 @@ If admin from UI don't work or if you want to enable custom registry and to publ
     DOCKER_REGISTRY=rg.fr-par.scw.cloud/mywonderfulregistry
     DOCKER_USER=myuser
     DOCKER_PASSWORD=mypassword
-    DSS_VERSION=13.4.4
+    DSS_VERSION=13.5.0
 
     kubectl -n dataiku exec -it $(kubectl -n dataiku get pod | grep '2/2' | awk '{print $1}') -- docker login ${DOCKER_REGISTRY} -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
 
