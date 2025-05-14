@@ -116,3 +116,35 @@ jobs:
       - name: Build and push cde image
         run: |
           kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss;./bin/dssadmin build-base-image --type cde --with-py311 --with-py39 && docker tag \$(docker images | egrep '^dku-cde-base.*${{env.DSS_VERSION}}' | awk '{print \$1 "'"'":"'"'" \$2}') ${{ secrets.DOCKER_REGISTRY }}/\$(docker images | egrep '^dku-cde-base.*${{env.DSS_VERSION}}'  | awk '{print \$1 "'"'":"'"'" \$2}') && docker push ${{ secrets.DOCKER_REGISTRY }}/\$(docker images | egrep '^dku-cde-base.*${{env.DSS_VERSION}}' | awk '{print \$1 "'"'":"'"'" \$2}')"
+
+      - name: Check if code-env images exist
+        id: code-env-check
+        run: |
+          # Vérifier si les images de code-env existent déjà dans le registry
+          IMAGE_PREFIX="${{ secrets.DOCKER_REGISTRY }}/dku-code-env"
+          VERSION="${{ env.DSS_VERSION }}"
+          
+          # Vérifier les images Python 3.9 et 3.11
+          if docker manifest inspect "${IMAGE_PREFIX}-python39:${VERSION}" > /dev/null 2>&1 && \
+             docker manifest inspect "${IMAGE_PREFIX}-python311:${VERSION}" > /dev/null 2>&1; then
+            echo "Code-env images exist"
+            echo "::set-output name=code_env_exists::true"
+          else
+            echo "Code-env images do not exist"
+            echo "::set-output name=code_env_exists::false"
+          fi
+
+      - name: Build and push code-env images
+        if: steps.code-env-check.outputs.code_env_exists == 'false'
+        run: |
+          # Construire les images de code-env
+          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "cd dss && ./bin/dssadmin build-container-exec-code-env-images --all"
+          
+          # Récupérer la liste des images construites et les pousser vers le registry
+          kubectl exec -it -n ${{ env.KUBE_NAMESPACE }} ${{ env.POD_NAME }} -- sh -c "
+            for img in \$(docker images | grep '^dku-code-env' | awk '{print \$1\":\"\$2}'); do
+              echo \"Tagging and pushing \$img\"
+              docker tag \$img ${{ secrets.DOCKER_REGISTRY }}/\$img
+              docker push ${{ secrets.DOCKER_REGISTRY }}/\$img
+            done
+          "
