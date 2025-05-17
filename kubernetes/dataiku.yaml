@@ -54,7 +54,7 @@ spec:
           mountPath: /home/dataiku/dss
       containers:
       - name: dataiku
-        image: rhanka/dataiku:13.5.2
+        image: rhanka/dataiku:13.5.3
         ports:
         - containerPort: 10000
         env:
