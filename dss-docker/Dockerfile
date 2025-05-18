@@ -72,7 +72,7 @@ USER dataiku
 RUN DSSKIT="dataiku-dss-$DSS_VERSION" \
     && "$DSSKIT"/installer.sh -d "$DSS_DATADIR" -p "$DSS_PORT" \
     && "$DSS_DATADIR"/bin/dssadmin install-R-integration \
-    && "$DSS_DATADIR"/bin/dssadmin install-graphics-export
+    && (cd "$DSSKIT"/resources/graphics-export && npm install puppeteer@23.11.1 fs)
 
 COPY run.sh /home/dataiku/
 
